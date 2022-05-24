@@ -143,3 +143,43 @@ class Test extends TestCase
 - Chạy nhiều file bên trong thư mục: vendor/bin/phpunit THƯ_MỤC/
 - Chạy theo hàm chỉ định: vendor/bin/phpunit THƯ_MỤC/ --filter=tên_Hàm
 - Show kết quả có màu: vendor/bin/phpunit THƯ_MỤC/ --color
+
+
+============ Bài 13: Sử dụng autoload với composer ============
+
+- Tạo thư mục ví dụ tên là src.
+- Tạo các file class vào thư mục src
+- Tạo autload vào file composer.json:
+{
+ "autoload": {
+   "psr-4": {
+      "App\\" : "src"
+    }
+  }
+}
+
+"App\\": Đường dẫn gốc namespace
+"src" : Đường dẫn thư mục nơi chứa file cần gọi
+
+- Đặt namespace App; vào các class cần test mục đích để tiện gọi vào file test. Ví dụ:
+
+* File src/User.php
+namespace App;
+class User{
+  public function run(){
+     return "Hello World";
+  }
+}
+
+* File test user
+use App\User;
+require 'vendor/autoload.php';
+class TestUser{
+  public function testRunHelloWorld(){
+    $user = new User();
+    $this->assertEqual("Hello World", $user->run());    
+  }
+}
+- Chạy phpunit --bootstrap='vendor/autoload.php' : chạy câu lệnh đăng ký require 'vendor/autoload' vào các file để chạy autoload
+- Chạy câu lệnh composer dump-autoload
+
