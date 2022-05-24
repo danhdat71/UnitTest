@@ -1,0 +1,145 @@
+============ Bài 1: Giới thiệu khóa học UnitTesting ============
+
+============ Bài 2: Cài đặt composer với PHP vào máy ============
+Do em dùng Window nên em bỏ qua bài 3,4 (Cài trên môi trường MacOS và Linux)
+- Bước 1: Cài đặt PHP, em đã cài XAMPP nên đã tích hợp sẵn cài đặt PHP vào Window. Kiểm
+tra phiên bản php dùng command: php -v. Em dùng php 8.1.4
+- Bước 2: Tải file Composer theo đường dẫn : https://getcomposer.org/download/, ấn chọn tải file exe.
+- Bước 3: Install composer vào Window, lưu ý là chọn đường dẫn trỏ tới file php trong thư mục Xampp/Php/Php.exe
+- Bước 3: Tiếp tục ấn next cho tới khi hoàn tất.
+- Bước 4: Kiểm tra composer cài thành công bằng cách gõ: composer. Nếu màn hình CMD hiển thị các
+tùy chọn nghĩa là đã hoàn tất.
+
+============ Bài 5: Tạo project và cài đặt PHPUnit ============
+- Tạo project tên tùy chọn. Ví dụ là UnitTest.
+- Dùng composer để cài đặt package PHPUnit bằng cách gõ lệnh:
+composer require --dev phpunit/phpunit
+- Tùy vô phiên bản php thì nó tự cài phiên bản package tương ứng. Của em nó cài phpunit 9.5.20
+
+============ Bài 6: Tạo và chạy thử bài test đầu tiên ============
+
+use PHPUnit\Framework\TestCase;
+
+class Test extends TestCase
+{
+    public function TestEqualsResult()
+    {
+        $this->assertEqual(2, 1+1);
+    }
+}
+
+Chạy comand line: vendor/bin/phpunit Test.php
+
+Kết quả:
+OK(1 test, 1 assert): 1 hàm test, 1 gọi hàm assert
+
+============ Bài 7: Test multiple assertion ============
+
+function add($a, $b)
+{
+    return $a+$b;
+}
+
+use PHPUnit\Framework\TestCase;
+
+class Test extends TestCase
+{
+    public function TestEqualsResult()
+    {
+        $this->assertEqual(2, add(1, 1));
+        $this->assertEqual(4, add(2, 2));
+    }
+}
+
+- hàm TestEqualsResult là hàm dùng để kiểm tra hàm add() có trả về kết quả giống mong muốn không.
+
+Kết quả:
+OK(1 test, 2 assert): 1 hàm test, 2 gọi hàm assert
+
+
+============ Bài 8: Test multiple assertion, kiểm trả trả về không chính xác ============
+
+function add($a, $b)
+{
+    return $a+$b;
+}
+
+use PHPUnit\Framework\TestCase;
+
+class Test extends TestCase
+{
+    public function testAddDoesNotReturnIncorrectSum()
+    {
+        $this->assertNotEqual(3, add(1, 1));
+    }
+}
+
+- Hàm testAddDoesNotReturnIncorrectSum là hàm test xem hàm add trả về kết quả sai không.
+
+Kết quả:
+OK(1 test, 1 assert): 1 hàm test, 1 gọi hàm assert
+
+============ Bài 9: Test class ============
+
+- Bước 1: Tạo 1 class User.
+class User{
+    public $firstName = null;
+    public $lastName = null;
+
+    public function __construct($firstName = null, $lastName = null)
+    {
+        $this->firstName = $firstName;
+        $this->lastName = $lastName;
+    }
+
+    public function getFullName()
+    {
+        return trim($this->firstName . " " .$this->lastName);
+    }
+}
+
+- Bước 2: Tạo class để test class User. Đặt tên là TestUser.
+class TestUser{
+    public function testFullName()
+    {
+        $user = new User("Danh", "Đạt");
+        $this->assertEqual("Danh Dat", $user->getFullName());
+    }
+
+    public function testDefaultEmpty()
+    {
+        $user = new User();
+        $this->assertEqual("", $user->getFullName());
+    }
+}
+
+- Hàm testFullName: mục địch là để kiểm trả fullName trả về có giống như mong muốn.
+
+Kết quả:
+OK(1 test, 1 assert): 1 hàm testFullName, 1 gọi hàm assert
+
+
+============ Bài 10: Cách đặt tên hàm test ============
+
+use PHPUnit\Framework\TestCase;
+
+class Test extends TestCase
+{
+    public function hasFirstName()
+    {
+        $user = new User();
+        $user->firstName = "TEST";
+        $this->assertEqual("TEST", $user->firstName);
+    }
+}
+
+
+- Sau khi chạy vendor/bin/phpunit Test thì hàm hasFirstName không chạy do không có "test" ở
+đầu tên hàm.
+- Có thể đặt tên hàm theo kiểu testCarmelCase hoặc test_snake_case
+
+============ Bài 11: Chạy test theo ý muốn ============
+- Chạy class test: vendor/bin/phpunit THƯ_MỤC/TÊN_FILE.php
+- Chạy nhiều file bên trong thư mục: vendor/bin/phpunit THƯ_MỤC/
+- Chạy theo hàm chỉ định: vendor/bin/phpunit THƯ_MỤC/ --filter=tên_Hàm
+- Show kết quả có màu: vendor/bin/phpunit THƯ_MỤC/ --color
