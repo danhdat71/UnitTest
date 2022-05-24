@@ -177,7 +177,7 @@ require 'vendor/autoload.php';
 class TestUser{
   public function testRunHelloWorld(){
     $user = new User();
-    $this->assertEqual("Hello World", $user->run());    
+    $this->assertEqual("Hello World", $user->run());
   }
 }
 - Chạy phpunit --bootstrap='vendor/autoload.php' : chạy câu lệnh đăng ký require 'vendor/autoload' vào các file để chạy autoload
