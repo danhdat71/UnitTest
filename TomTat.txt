@@ -183,3 +183,81 @@ class TestUser{
 - Chạy phpunit --bootstrap='vendor/autoload.php' : chạy câu lệnh đăng ký require 'vendor/autoload' vào các file để chạy autoload
 - Chạy câu lệnh composer dump-autoload
 
+
+============ Bài 14, 15: Test Queue Class ============
+
+Test queue:
+
+- Tạo file demo queue:
+namespace App;
+
+class Queue
+{
+    public $items = [];
+    public function push($item)
+    {
+        $this->items[] = $item;
+    }
+    public function pop()
+    {
+        return array_pop($this->items);
+    }
+    public function getCount()
+    {
+        return count($this->items);
+    }
+}
+
+- Tạo file TestQueue để test file Queue:
+
+
+use PHPUnit\Framework\TestCase;
+use App\Queue;
+
+class QueueTest extends TestCase
+{
+    protected $queueClass;
+
+    //Hàm set up dùng để tạo dựng 1 đối tượng dùng chung trong class
+    //Thay vì phải tạo new Class trong mỗi function
+    public function setUp() : void
+    {
+        $this->queueClass = new Queue;
+    }
+
+    //Hàm tearDown để gỡ bỏ đối tượng dùng chung đó.
+    public function tearDown() : void
+    {
+        unset($this->queueClass);
+    }
+
+    // Hàm test khởi tạo queue là rỗng
+    public function testNewQueueIsEmpty()
+    {
+        $this->assertEquals(0, $this->queueClass->getCount());
+    }
+
+    //Hàm test khi đẩy 1 item vào queue và sẽ trả về đếm queue là 1
+    public function testAnItemIsAddedToTheQueue()
+    {
+        $this->queueClass->push("Green");
+        $this->assertEquals(1, $this->queueClass->getCount());
+    }
+
+    //Hàm pop các item khỏi queue, sau khi pop các item thì queue sẽ trả về rỗng
+    public function testPopIsSuccess()
+    {
+        $this->queueClass->push("green");
+        $this->queueClass->pop();
+        $this->assertEmpty($this->queueClass->items);
+    }
+}
+
+
+============ Bài 16: Kiến thức về hàm setUp và tearDown ============
+
+- Hàm setUp và tearDown được khai báo theo public hoặc protected
+- Hàm setUp sẽ được chạy trước các hàm test bên trong testClass
+- Hàm tearDown sẽ chạy sau khi chạy các hàm test. Hàm tearDown thường unset các
+khai báo class. Hàm này thường ít dùng nhưng nên dùng trong khai báo nhiều class vào hàm setUp.
+Mục đích là tránh bị leak memory

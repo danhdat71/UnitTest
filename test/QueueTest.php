@@ -40,5 +40,7 @@ class QueueTest extends TestCase
         $this->queueClass->push("green");
         $this->queueClass->push("red");
         $this->assertEquals(2, $this->queueClass->getCount());
+
+        #return $this->queueClass->getCount();
     }
 }
