@@ -16,6 +16,11 @@ class Queue
         return array_pop($this->items);
     }
 
+    public function shift()
+    {
+        return array_shift($this->items);
+    }
+
     public function getCount()
     {
         return count($this->items);

@@ -261,3 +261,55 @@ class QueueTest extends TestCase
 - Hàm tearDown sẽ chạy sau khi chạy các hàm test. Hàm tearDown thường unset các
 khai báo class. Hàm này thường ít dùng nhưng nên dùng trong khai báo nhiều class vào hàm setUp.
 Mục đích là tránh bị leak memory
+
+
+============ Bài 17: Easily add a new test method using the test fixture ============
+
+- Test phần tử được xóa ở đầu của queue không
+
+* File queue
+namespace App;
+
+class Queue
+{
+    public $items = [];
+
+    public function push($item)
+    {
+        $this->items[] = $item;
+    }
+
+    public function pop()
+    {
+        return array_pop($this->items);
+    }
+
+    public function getCount()
+    {
+        return count($this->items);
+    }
+}
+
+* File để test Queue.php
+use PHPUnit\Framework\TestCase;
+use App\Queue;
+
+class QueueTest extends TestCase
+{
+    public function testAnItemRemovedFrontTheFrontOfTheQueue()
+    {
+        $this->queueClass->push('first');
+        $this->queueClass->push('second');
+
+        //Mong muốn hàm pop trong class phải là first
+        $this->assertEquals('first', $this->queueClass->pop());
+    }
+}
+
+- Kết quả trả về không như mong đợi
+
+- Tiến hành fix bug vào file Queue.php
+- Do hàm push bên trong file queue dồn các phần tử vào mảng ở vị trí cuối của mảng
+và hàm pop vừa xóa và trả về phần tử cuối mảng => "first" != "second"
+- Fix bug bằng cách sửa hàm array_pop => array_shift
+- Hàm array_shift xóa phần tử ở đầu mảng
