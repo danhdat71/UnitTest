@@ -1,5 +1,6 @@
 <?php
 
+use App\Mailer;
 use PHPUnit\Framework\TestCase;
 use App\User;
 
@@ -24,5 +25,15 @@ class UserTest extends TestCase
     {
         $user = new User();
         $this->assertEmpty($user->getFullNameVn());
+    }
+
+    public function testNotifyIsSent()
+    {
+        $user = new User();
+        $mockMailer = $this->createMock(Mailer::class);
+        $mockMailer->method('sendMail')->willReturn(true);
+        $user->setMailer($mockMailer);
+        $user->email = "dat@mail.com";
+        $this->assertTrue($user->notify("Xin chào !"));
     }
 }

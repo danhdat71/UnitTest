@@ -313,3 +313,79 @@ class QueueTest extends TestCase
 và hàm pop vừa xóa và trả về phần tử cuối mảng => "first" != "second"
 - Fix bug bằng cách sửa hàm array_pop => array_shift
 - Hàm array_shift xóa phần tử ở đầu mảng
+
+
+============ Bài 18: Share fixtures between tests for resource-intensive data ============
+- Sử dụng hàm
++ setUpBeforeClass: Hàm này được chạy trước khi class Test được chạy.
++ tearDownAfterClass: Hàm này được chạy cuối cùng sau khi class được chạy.
+
+- Hàm setUpBeforeClass thường được dùng để khởi tạo đối tượng dùng chung trong class
+- Hàm tearDownAfterClass thường được dùng để hủy đối tượng, ngắt kết nối DB
+
+Ví dụ
+
+class TestQueue
+{
+    protected static $queueStatic = null;
+
+    public static function setUpBeforeClass()
+    {
+        static::$queueStatic = new Queue();
+    }
+
+    public function tearDownAfterClass()
+    {
+        static::$queueStatic = null;
+    }
+}
+
+============ Bài 19: Testing exception ============
+Testing cùng với exception được ném ra sau khi lỗi
+
+Ví dụ:
+
+<?php
+
+use App\QueueException;
+
+class Queue
+{
+    protected $items = [];
+
+    public function push($item)
+    {
+        if($this->getCount() == static::MAX_ITEMS){
+            throw new QueueException("Queue đầy !");
+        }
+        $this->items[] = $item;
+    }
+}
+class QueueTest
+{
+    //Test exception được ném ra sau khi queue đầy
+    public function testExceptionDuocNemRaSauKhiQueueBiDay()
+    {
+        for($i = 0; $i < Queue::MAX_ITEMS; $i++){
+            $this->queueNonStatic->push($i);
+        }
+        //Hàm expectException để check messages của hàm push khi queue đầy
+        $this->expectException(QueueException::class);
+        //Test messages queue đầy
+        $this->expectExceptionMessage("Queue đầy !");
+        $this->queueNonStatic->push("Phần tử khiến queue bị đầy");
+    }
+}
+
+============ Bài 20: Sử dụng mock để test tác vụ tốn thời gian ============
+- Vì các tác vụ tốn thời gian nên hàm test sẽ lâu cho ra kết quả test
+- Cho nên dùng mock để test
+
+- Cách dùng:
+$mock = $this->createMock(ClassCanTest::class);
+$mock->method('hamCanTest')->willReturn($KetQuaSeTraVe);
+$res = $mock->hamCanTest($paramTruyenVao);
+$this->assertEqual($ketQuaMongMuon, $res);
+
+
+============ Bài 21:  ============
